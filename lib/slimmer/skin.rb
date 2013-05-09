@@ -135,6 +135,7 @@ module Slimmer
       ]
 
       template_name = response.headers[Headers::TEMPLATE_HEADER] || 'wrapper'
+      template_name += "-intl" if artefact and artefact.need_extended_font
       process(processors, body, template(template_name))
     end
 

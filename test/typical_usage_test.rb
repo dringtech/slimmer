@@ -143,6 +143,36 @@ module TypicalUsage
     end
   end
 
+  class ExtendedFontTest < SlimmerIntegrationTest
+    def setup
+      super
+      @artefact = artefact_for_slug("some-article")
+      @artefact["details"]["need_extended_font"] = true
+      @response = %{
+        <html>
+        <head>
+          <title>The title of the page</title>
+        </head>
+        <body class="body_class">
+          <div id="wrapper">The body of the page</div>
+        </body>
+        </html>
+      }
+    end
+
+    def test_should_load_intl_template
+      given_response 200, @response, {Slimmer::Headers::ARTEFACT_HEADER => @artefact.to_json},
+        {:expect_intl_template => true}
+      assert_rendered_in_template "#global-header h1", "I AM AN International TITLE"
+    end
+
+    def test_should_load_intl_variant_of_specified_template
+      given_response 200, @response, {Slimmer::Headers::ARTEFACT_HEADER => @artefact.to_json, Slimmer::Headers::TEMPLATE_HEADER => "header_footer_only"},
+        {:expect_intl_template => true}
+      assert_rendered_in_template "#global-header h1", "International Header Footer Only Title"
+    end
+  end
+
   class ConditionalCommentTest < SlimmerIntegrationTest
     given_response 200, %{
       <html>

@@ -59,6 +59,7 @@ class SlimmerIntegrationTest < MiniTest::Unit::TestCase
   end
 
   def given_response(code, body, headers={}, app_options={})
+    expect_intl_template = app_options.delete(:expect_intl_template)
     self.class.class_eval do
       define_method(:app) do
         inner_app = proc { |env|
@@ -68,11 +69,14 @@ class SlimmerIntegrationTest < MiniTest::Unit::TestCase
       end
     end
 
-    template_name = case code
+    template_name = headers[Slimmer::Headers::TEMPLATE_HEADER]
+    template_name ||= case code
     when 200 then 'wrapper'
     when 404 then '404'
     else          '500'
     end
+
+    template_name += "-intl" if expect_intl_template
 
     use_template(template_name)
     use_template('related.raw')
