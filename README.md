@@ -95,6 +95,17 @@ This will make calls out to static when you try and render a partial prefixed wi
 
 You will need a copy of static running for the templates to be loaded from.
 
+### Testing shared components
+
+There is a capybara test helper which can be loaded to assert that the shared components are present on the page. You will need to first include the helper:
+
+    require 'slimmer/test_helpers/shared_templates'
+    World(Slimmer::TestHelpers::SharedTemplates)
+
+Then in tests:
+
+    shared_component_should_be_loaded('metadata')
+
 ## The name
 
 Slimmer was extracted from a much larger project called 'skinner'. 'slimmer' referred to the size 
