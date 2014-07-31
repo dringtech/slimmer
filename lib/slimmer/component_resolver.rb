@@ -1,4 +1,5 @@
 require 'slimmer/govuk_request_id'
+require 'active_support/core_ext/string/inflections'
 
 module Slimmer
   class ComponentResolver < ::ActionView::Resolver
@@ -6,7 +7,7 @@ module Slimmer
       return [] unless prefix == 'govuk_component'
 
       template_path = [prefix, name].join('/')
-      if Rails.env.test?
+      if test?
         template_body = test_body(template_path)
       else
         template_body = fetch(template_url(template_path))
@@ -22,6 +23,10 @@ module Slimmer
     end
 
   private
+    def test?
+      defined?(Rails) && Rails.env.test?
+    end
+
     def erb_handler
       @erb_handler ||= ActionView::Template.registered_template_handler(:erb)
     end
